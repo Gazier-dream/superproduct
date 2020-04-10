@@ -1,3 +1,4 @@
+
 <template>
   <a
     v-if="USE_DEEP_LINKS"
@@ -69,6 +70,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex';
 import iconTip from '../assets/iconTip.svg';
@@ -168,97 +170,101 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-  .overlay {
-    bottom: 0;
-    left: 0;
-    position: fixed;
-    right: 0;
-    top: 0;
-    z-index: 10;
-  }
-
-  .retip__icon {
-    cursor: pointer;
-    height: 1rem;
-    margin-right: 0.2rem;
-    padding: 0.1rem 0;
-    vertical-align: top;
-    width: 1rem;
-  }
-
-  .retip__container_wrapper {
-    position: relative;
-    z-index: 20;
-  }
-
-  .currency-value,
-  .ae-amount {
-    align-items: center;
-    display: flex;
-    height: 1rem;
-  }
-
-  .retip__content {
+<style lang="scss">
+  .retip__content,
+  .tip__content {
     align-items: center;
     display: flex;
     flex: 0 0 auto;
     height: 1rem;
     position: relative;
 
-    &:hover .retip__icon {
+    img {
+      height: 0.7rem;
+      margin-right: 0.2rem;
+      vertical-align: top;
+      width: 1rem;
+    }
+
+    &:hover img {
       filter: brightness(1.3);
     }
   }
 
-  .ae {
-    color: $secondary_color;
-  }
-
-  .button-section {
-    margin-left: 0.5rem;
-    text-align: center;
-
-    button {
-      width: 100%;
-    }
-  }
-
-  .retip__wrapper {
+  .retip__wrapper,
+  .tip-url__wrapper {
     height: 1rem;
-  }
 
-  .retip__container {
-    background-color: black;
-    border-radius: 0.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 0.25rem;
-    min-width: 19rem;
-    padding: 1rem;
-    position: absolute;
+    .overlay {
+      bottom: 0;
+      left: 0;
+      position: fixed;
+      right: 0;
+      top: 0;
+      z-index: 10;
+    }
 
-    & > div:not(.spinner__container) {
+    .retip__icon:hover,
+    .tip__icon:hover {
+      cursor: pointer;
+    }
+
+    .retip__container_wrapper,
+    .tip__container_wrapper {
+      position: relative;
+      z-index: 20;
+    }
+
+    .currency-value,
+    .ae-amount {
+      align-items: center;
       display: flex;
+      height: 1rem;
+    }
 
-      /deep/ .input-group .form-control {
-        color: $custom_links_color;
+    .ae {
+      color: $secondary_color;
+    }
+
+    .button-section {
+      margin-left: 0.5rem;
+      text-align: center;
+
+      button {
+        width: 100%;
       }
     }
 
-    .ae-button {
-      margin-left: 0.5rem;
+    .retip__container,
+    .tip__container {
+      background-color: black;
+      border-radius: 0.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 0.25rem;
+      min-width: 19rem;
+      padding: 1rem;
+      position: absolute;
+
+      & > div:not(.spinner__container) {
+        display: flex;
+
+        /deep/ .input-group .form-control {
+          color: $custom_links_color;
+        }
+      }
+
+      .ae-button {
+        margin-left: 0.5rem;
+      }
     }
   }
 
   @media only screen and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
-    .retip__container {
+    .retip__container,
+    .tip__container {
       min-width: 13rem;
       padding: 0.5rem;
-    }
-
-    .retip__button {
-      font-size: 0.5rem;
     }
   }
 </style>
