@@ -1,19 +1,16 @@
 <template>
-  <div>
-    <mobile-navigation />
-    <right-section />
-    <left-section />
+  <Page>
     <div class="container wrapper url__page">
-      <back-button-ribbon />
+      <BackButtonRibbon />
       <div
         v-if="tip"
         class="tipped__url"
       >
-        <tip-record :tip="tip" />
+        <TipRecord :tip="tip" />
       </div>
       <div class="comment__section">
         <p class="latest__comments">
-          Latest Replies
+          {{ $t('views.TipCommentsView.LatestReplies') }}
         </p>
         <div class="d-flex">
           <Avatar
@@ -24,18 +21,18 @@
             <input
               v-model="newComment"
               type="text"
-              placeholder="Add reply"
+              :placeholder="$t('views.TipCommentsView.AddReply')"
               class="form-control reply__input"
             >
           </div>
         </div>
         <div class="send-comment">
-          <ae-button
-            :disabled="newComment.length === 0 || showLoading"
-            @click="sendTipComment()"
+          <AeButton
+            :disabled="newComment.length === 0"
+            @click="sendTipComment"
           >
-            Reply
-          </ae-button>
+            {{ $t('views.TipCommentsView.Reply') }}
+          </AeButton>
         </div>
       </div>
       <div class="comments__section">
@@ -44,10 +41,10 @@
           class="no-results text-center w-100"
           :class="[error ? 'error' : '']"
         >
-          {{ $t('pages.TipComments.NoResultsMsg') }}
+          {{ $t('views.TipCommentsView.NoResultsMsg') }}
         </div>
 
-        <tip-comment
+        <TipComment
           v-for="(comment, index) in comments"
           :key="index"
           :comment="comment"
@@ -56,24 +53,21 @@
           v-if="showLoading"
           class="text-center w-100 mt-3"
         >
-          <loading :show-loading="true" />
+          <Loading />
         </div>
       </div>
     </div>
-  </div>
+  </Page>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 // eslint-disable-next-line import/no-cycle
 import Backend from '../utils/backend';
-import { USE_DEEP_LINKS } from '../utils/util';
+import { USE_DEEP_LINKS, createDeepLinkUrl } from '../utils/util';
 import TipRecord from '../components/tipRecords/TipRecord.vue';
 import TipComment from '../components/tipRecords/TipComment.vue';
-import LeftSection from '../components/layout/LeftSection.vue';
-import RightSection from '../components/layout/RightSection.vue';
-// eslint-disable-next-line import/no-cycle
-import MobileNavigation from '../components/layout/MobileNavigation.vue';
+import Page from '../components/layout/Page.vue';
 import { wallet } from '../utils/walletSearch';
 import Loading from '../components/Loading.vue';
 import { EventBus } from '../utils/eventBus';
@@ -87,9 +81,7 @@ export default {
     Loading,
     TipRecord,
     TipComment,
-    LeftSection,
-    RightSection,
-    MobileNavigation,
+    Page,
     AeButton,
     Avatar,
     BackButtonRibbon,
@@ -103,11 +95,10 @@ export default {
       newComment: '',
       address: null,
       tip: null,
+      USE_DEEP_LINKS,
     };
   },
-  computed: {
-    ...mapGetters(['settings', 'account', 'chainNames', 'isLoggedIn']),
-  },
+  computed: mapGetters(['account', 'chainNames', 'isLoggedIn', 'loading']),
   watch: {
     tip() {
       this.updateTip();
@@ -132,18 +123,11 @@ export default {
     clearInterval(this.interval);
   },
   methods: {
-    getAvatar(address) {
-      const userImage = Backend.getProfileImageUrl(address);
-      return userImage || this.avatar;
-    },
     async sendTipComment() {
-      if (USE_DEEP_LINKS) {
-        const url = new URL(`${process.env.VUE_APP_WALLET_URL}/comment`);
-        url.searchParams.set('id', this.tip.id);
-        url.searchParams.set('text', this.newComment);
-        url.searchParams.set('x-success', window.location);
-        url.searchParams.set('x-cancel', window.location);
-        window.location = url;
+      if (this.USE_DEEP_LINKS || !this.isLoggedIn) {
+        window.location = createDeepLinkUrl(
+          { type: 'comment', id: this.tip.id, text: this.newComment },
+        );
         return;
       }
       this.showLoading = true;
@@ -186,9 +170,9 @@ export default {
 };
 </script>
 
-
 <style lang="scss">
-.url__page {
+.url__page,
+.comment__page {
   color: $light_font_color;
   font-size: 0.75rem;
 
@@ -199,17 +183,11 @@ export default {
     border-radius: 50%;
   }
 
-  .input-group {
-    width: calc(100% - 2.5rem);
-  }
+  .tipped__url .tip__record {
+    margin-bottom: 0;
 
-  .tipped__url {
-    .tip__record {
-      margin-bottom: 0;
-
-      &.row {
-        background-color: $thumbnail_background_color;
-      }
+    &.row {
+      background-color: $thumbnail_background_color;
     }
   }
 
