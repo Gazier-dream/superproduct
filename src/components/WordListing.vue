@@ -30,107 +30,7 @@
       />
     </div>
 
-    <div class="col-md-3">
-      <OutlinedButton
-        class="green unpadded mr-1"
-        @click="showBuyModal = true"
-      >
-        <!-- eslint-disable vue-i18n/no-raw-text -->
-        Buy
-      </OutlinedButton>
-
-      <OutlinedButton
-        class="red unpadded"
-        @click="showSellModal = true"
-      >
-        <!-- eslint-disable vue-i18n/no-raw-text -->
-        Sell
-      </OutlinedButton>
-    </div>
-
-    <Modal
-      v-if="showBuyModal"
-      @close="showBuyModal = false"
-    >
-      <div class="label">
-        Account Balance
-      </div>
-      <AeAmount
-        :amount="tokenBalance"
-        :token="tokenAddress"
-      />
-      <div class="mt-3 label">
-        Amount buying
-      </div>
-      <div class="input-group mb-2">
-        <input
-          v-model="buyAmount"
-          type="number"
-          maxlength="90"
-          class="form-control"
-        >
-      </div>
-      <div class="mt-3 label">
-        Total you pay
-      </div>
-      <AeAmountFiat :amount="buyAmount * buyPrice" />
-      <div class="mt-3 text-center">
-        <OutlinedButton
-          class="green"
-          @click="buy"
-        >
-          <!-- eslint-disable vue-i18n/no-raw-text -->
-          <Loading
-            v-if="loading"
-            small
-            class="p-0"
-          />
-          <span v-else>Buy</span>
-        </OutlinedButton>
-      </div>
-    </Modal>
-
-    <Modal
-      v-if="showSellModal"
-      @close="showSellModal = false"
-    >
-      <div class="label">
-        Account Balance
-      </div>
-      <AeAmount
-        :amount="tokenBalance"
-        :token="tokenAddress"
-      />
-      <div class="mt-3 label">
-        Amount selling
-      </div>
-      <div class="input-group mb-2">
-        <input
-          v-model="sellAmount"
-          type="number"
-          maxlength="90"
-          class="form-control"
-        >
-      </div>
-      <div class="mt-3 label">
-        Total you get
-      </div>
-      <AeAmountFiat :amount="sellAmount * sellPrice" />
-      <div class="mt-3 text-center">
-        <OutlinedButton
-          class="red"
-          @click="sell"
-        >
-          <!-- eslint-disable vue-i18n/no-raw-text -->
-          <Loading
-            v-if="loading"
-            small
-            class="p-0"
-          />
-          <span v-else>Sell</span>
-        </OutlinedButton>
-      </div>
-    </Modal>
+    <WordBuySellButtons :sale="sale" />
   </div>
 </template>
 
@@ -142,19 +42,15 @@ import Backend from '../utils/backend';
 import { EventBus } from '../utils/eventBus';
 import AeAmount from './AeAmount.vue';
 import Loading from './Loading.vue';
-import OutlinedButton from './OutlinedButton.vue';
-import Modal from './Modal.vue';
-import AeAmountFiat from './AeAmountFiat.vue';
 import { shiftDecimalPlaces } from '../utils';
+import WordBuySellButtons from './WordBuySellButtons.vue';
 
 export default {
   name: 'WordListing',
   components: {
-    AeAmountFiat,
+    WordBuySellButtons,
     AeAmount,
     Loading,
-    OutlinedButton,
-    Modal,
   },
   props: {
     word: { type: String, required: true },
@@ -243,18 +139,6 @@ export default {
 
 h2 {
   margin-top: 1rem;
-}
-
-.not-bootstrap-modal ::v-deep .not-bootstrap-modal-content {
-  background-color: $article_content_color;
-  border-radius: 0.5rem;
-  margin: 1.9rem -13.6rem;
-  padding: 1rem;
-
-  @include smallest {
-    min-width: 16rem;
-    padding: 0.5rem;
-  }
 }
 
 .label {
